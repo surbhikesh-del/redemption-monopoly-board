@@ -2268,7 +2268,7 @@
   <script>
     const STORAGE_KEY = "redemption-monopoly-live-v3";
     const DISPLAY_KEY = "redemption-monopoly-display-v1";
-    const ACTIVITY_PRESET = "fast-lecture-clan-v2";
+    const ACTIVITY_PRESET = "fast-lecture-clan-v3";
     const EMBEDDED_SETUP = null;
 
     const palette = [
@@ -2346,6 +2346,30 @@
       "What belongs to you, but other people use it more than you do?"
     ];
 
+    const legacySpaceTitles = new Set([
+      "Shout Cheer",
+      "Mystery Task",
+      "Flashback",
+      "Hide From Camera",
+      "Helping Hand",
+      "Portal Gate",
+      "Double Points",
+      "Final Challenge",
+      "Hourglass",
+      "Time Warp",
+      "Who Can Freeze?",
+      "Dance Off",
+      "50 Bonus Points",
+      "Clap Chain",
+      "Loud Cheer",
+      "Bonus Sprint",
+      "Memory Lane",
+      "Clan Shield",
+      "Mimic Master",
+      "Wild Card",
+      "Redemption"
+    ]);
+
     const state = loadState();
     let selectedSpaceId = 0;
     let activePlayerId = state.activePlayerId || players[0].id;
@@ -2417,7 +2441,8 @@
     }
 
     function applyActivityPreset() {
-      if (state.activityPreset === ACTIVITY_PRESET) return;
+      const hasLegacySpaces = Array.isArray(state.spaces) && state.spaces.some((space) => legacySpaceTitles.has(space.title));
+      if (state.activityPreset === ACTIVITY_PRESET && !hasLegacySpaces) return;
       state.spaces = structuredClone(defaultSpaces);
       state.activityPreset = ACTIVITY_PRESET;
       state.history = ["Fast lecture-theatre clan tasks loaded."].concat(state.history || []).slice(0, 40);
