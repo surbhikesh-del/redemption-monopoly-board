@@ -2333,6 +2333,19 @@
       colorIndex
     }));
 
+    const riddleBank = [
+      "I speak without a mouth and hear without ears. What am I?",
+      "What has keys but cannot open locks?",
+      "What gets wetter the more it dries?",
+      "What has a head, a tail, but no body?",
+      "What can travel around the world while staying in one corner?",
+      "What has many teeth but cannot bite?",
+      "What has hands but cannot clap?",
+      "What comes once in a minute, twice in a moment, but never in a thousand years?",
+      "What goes up but never comes down?",
+      "What belongs to you, but other people use it more than you do?"
+    ];
+
     const state = loadState();
     let selectedSpaceId = 0;
     let activePlayerId = state.activePlayerId || players[0].id;
@@ -2824,7 +2837,12 @@
     function showTaskPopup(player, space, roll) {
       taskKicker.textContent = `${player.name} rolled ${roll} and landed on`;
       taskTitle.textContent = space.title;
-      taskBody.textContent = space.action || "Complete the activity for this space.";
+      if (space.title === "Quick Riddle") {
+        const question = riddleBank[Math.floor(Math.random() * riddleBank.length)];
+        taskBody.innerHTML = `${escapeHtml(question)}<br><br><strong>Scoring:</strong> Correct +10. Fastest correct clan +5.`;
+      } else {
+        taskBody.textContent = space.action || "Complete the activity for this space.";
+      }
       taskPlayer.textContent = player.name;
       taskPoints.textContent = space.points ? `${space.points} pts` : "No points";
       taskType.textContent = space.type;
