@@ -2268,6 +2268,7 @@
   <script>
     const STORAGE_KEY = "redemption-monopoly-live-v3";
     const DISPLAY_KEY = "redemption-monopoly-display-v1";
+    const ACTIVITY_PRESET = "fast-lecture-clan-v1";
     const EMBEDDED_SETUP = null;
 
     const palette = [
@@ -2296,33 +2297,33 @@
 
     const defaultSpaces = [
       ["Start", "Roll again!", "corner", 0, 0],
-      ["Shout Cheer", "Whole clan cheers for 5 seconds", "challenge", 5, 2],
-      ["Mystery Task", "Draw or invent a quick challenge", "time", 10, 8],
-      ["Flashback", "Tell one win from this week", "challenge", 5, 5],
-      ["Hide From Camera", "Freeze in a dramatic pose", "chaos", 10, 3],
-      ["Helping Hand", "Choose a teammate to earn points", "bonus", 15, 1],
-      ["Portal Gate", "Jump to any purple space", "time", 0, 7],
-      ["Double Points", "Final challenge earns double", "corner", 0, 6],
-      ["Final Challenge", "Team duel round", "chaos", 30, 0],
-      ["Hourglass", "Beat the 30 second timer", "time", 15, 1],
-      ["Opposite Day", "Answer everything backwards", "challenge", 10, 4],
-      ["Riddle Time", "Solve a riddle for points", "bonus", 20, 1],
-      ["Time Warp", "Move back 3 spaces", "time", 0, 3],
-      ["Who Can Freeze?", "Last person moving loses turn", "challenge", 10, 2],
-      ["Go To Jail", "Move to the jail corner", "corner", 0, 8],
-      ["Steal 30 Points", "Take from another clan", "chaos", 30, 6],
-      ["Dance Off", "Best 10 second dance wins", "challenge", 20, 1],
-      ["50 Bonus Points", "Instant clan bonus", "bonus", 50, 1],
-      ["No Talking", "Mime the next answer", "chaos", 10, 6],
-      ["Clap Chain", "Keep the rhythm going", "challenge", 10, 8],
-      ["Loud Cheer", "Loudest clan cheer wins", "bonus", 15, 4],
-      ["Time Warp", "Move back 3 spaces", "corner", 0, 3],
-      ["Bonus Sprint", "Answer 3 fast questions", "bonus", 25, 1],
-      ["Memory Lane", "Recall a board space", "challenge", 15, 2],
-      ["Clan Shield", "Block one steal", "bonus", 0, 4],
-      ["Mimic Master", "Copy a classmate's motion", "challenge", 10, 5],
-      ["Wild Card", "Teacher chooses the twist", "time", 0, 7],
-      ["Redemption", "Recover lost points", "bonus", 30, 1]
+      ["Clan Wave", "All clans do one seated wave. Fastest clean wave wins.", "challenge", 20, 3],
+      ["Instant Chant", "Host gives 1 word. Best 5-second clan chant wins.", "challenge", 20, 0],
+      ["Freeze Pose", "Host gives a theme. Freeze in 3 seconds. Best pose wins.", "challenge", 20, 2],
+      ["Stand If", "Host says a statement. Matching people stand. Most accurate wins.", "challenge", 15, 4],
+      ["Quick Riddle", "10-second riddle. Correct +10; fastest correct +5.", "bonus", 15, 1],
+      ["Opposite Action", "Do the opposite of 5 host commands. Fewest mistakes wins.", "chaos", 20, 6],
+      ["Human Symbol", "Make a clear symbol using arms/bodies from seats. Best symbol wins.", "challenge", 20, 7],
+      ["Memory Flash", "Remember 5 items shown/read for 10 seconds. Most correct wins.", "time", 15, 8],
+      ["Odd One Out", "Host gives 4 words. Pick the odd one out. Fastest correct wins.", "challenge", 15, 5],
+      ["Would You Rather", "Vote left/right. Biggest clear majority wins.", "challenge", 10, 2],
+      ["Fast Fact", "Quick campus/freshie trivia. First correct clan wins.", "bonus", 15, 1],
+      ["Silent Act", "5 reps act silently. Their clan guesses fastest to win.", "challenge", 20, 6],
+      ["Pass Motion", "Pass one gesture row by row. Fastest smooth pass wins.", "challenge", 20, 3],
+      ["Go To Jail", "Lose next roll unless you win the next fast task.", "corner", 0, 8],
+      ["No Talking", "Next answer must be given with gestures only. Correct wins.", "chaos", 15, 6],
+      ["Spot Leader", "Find the secret leader doing tiny actions. Correct guess wins.", "challenge", 20, 4],
+      ["Category Rush", "Host gives category. Shout one valid answer together. No repeats.", "challenge", 15, 0],
+      ["Balance Check", "5 reps balance a safe item for 5 seconds. Most successes wins.", "challenge", 15, 5],
+      ["Camera Pose", "Whole clan poses for camera in 3 seconds. Best screen moment wins.", "bonus", 15, 2],
+      ["True Or False", "Show true/false with hands. Correct clans score.", "challenge", 10, 4],
+      ["Who Am I?", "Host gives 3 clues. First correct clan wins.", "bonus", 15, 1],
+      ["Speed Draw", "One rep draws/acts a clue. Clan guesses fastest to win.", "challenge", 20, 3],
+      ["Row Captain", "One row per clan does a quick stand/freeze/point challenge.", "challenge", 20, 8],
+      ["Countdown Sync", "Count 5-4-3-2-1 together. Most synchronized wins.", "challenge", 15, 2],
+      ["Lucky Pick", "Landing clan chooses another clan for a quick duel.", "time", 0, 7],
+      ["Steal Round", "All clans answer. Winner steals 10 points from any clan.", "chaos", 10, 9],
+      ["Redemption Round", "Lowest-score clan gets double points if they win.", "bonus", 30, 1]
     ].map(([title, action, type, points, colorIndex], index) => ({
       id: index,
       title,
@@ -2335,6 +2336,7 @@
     const state = loadState();
     let selectedSpaceId = 0;
     let activePlayerId = state.activePlayerId || players[0].id;
+    applyActivityPreset();
 
     const boardEl = document.querySelector("#board");
     const playersEl = document.querySelector("#players");
@@ -2396,8 +2398,17 @@
         history: ["All six clans are on START."],
         activePlayerId: players[0].id,
         die: 2,
-        dice: [1, 1]
+        dice: [1, 1],
+        activityPreset: ACTIVITY_PRESET
       };
+    }
+
+    function applyActivityPreset() {
+      if (state.activityPreset === ACTIVITY_PRESET) return;
+      state.spaces = structuredClone(defaultSpaces);
+      state.activityPreset = ACTIVITY_PRESET;
+      state.history = ["Fast lecture-theatre clan tasks loaded."].concat(state.history || []).slice(0, 40);
+      saveState();
     }
 
     function loadState() {
@@ -2442,7 +2453,8 @@
         history: Array.isArray(saved.history) ? saved.history.slice(-40).map(String) : fallback.history,
         activePlayerId: mergedPlayers.some((player) => player.id === saved.activePlayerId) ? saved.activePlayerId : mergedPlayers[0].id,
         die: Number(saved.die) || fallback.die,
-        dice: Array.isArray(saved.dice) && saved.dice.length === 2 ? saved.dice.map((value) => Math.max(1, Math.min(6, Number(value) || 1))) : fallback.dice
+        dice: Array.isArray(saved.dice) && saved.dice.length === 2 ? saved.dice.map((value) => Math.max(1, Math.min(6, Number(value) || 1))) : fallback.dice,
+        activityPreset: saved.activityPreset || ""
       };
     }
 
@@ -2463,6 +2475,7 @@
       state.activePlayerId = activePlayerId;
       state.playerCount = state.players.length;
       state.embeddedSource = EMBEDDED_SETUP?.exportedAt || "";
+      state.activityPreset = ACTIVITY_PRESET;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
@@ -2472,6 +2485,7 @@
         version: 4,
         exportedAt: new Date().toISOString(),
         spaces: state.spaces,
+        activityPreset: ACTIVITY_PRESET,
         players: state.players,
         playerCount: state.players.length,
         history: state.history,
